@@ -98,7 +98,7 @@ public class MinHeap {
     /**
      * Returns the parent position of a given element in the underlying array.
      * 
-     * @param i int with array position whose parent we look for
+     * @param child int with array position whose parent we look for
      * @return int with parent position in the array or -1 if input is invalid
      */
     private int parent(int child) {
@@ -188,9 +188,53 @@ public class MinHeap {
     } // method swap
 
     /**
-     * THIS IS YOUR ASSIGNMENT
+     * I think the idea here is to check the added element against each parent moving up the tree.
+     * When it no longer is smaller than the parent, then check it against the other child.
+     * After that, move it down the tree until min heap is no longer violated. If lucky, then
+     * the added value will not violate min-heap if it's added to the end of the tree.
+     * However, as that is not always the case, the element needs to be moved around the branches of
+     * the tree until it doesn't violate min-heap anymore.
+     * 
+     * METHOD EXPLANATION:
+     * This method seeks to sort a new child addded to a minimum heap binary tree. First, the index
+     * of the added child and its value are stored in variables "addedindex" and "ADDED_CHILD", respectively.
+     * the index of the parent in the underlying list is also taken. After all the prerequisite data is obtained
+     * the method enters a loop that iterates until the min-heap property is no longer violated. In each iteration,
+     * the parent and the added element's value are compared and switched if the parent is larger. If not, nothing is
+     * switched and the loop ends, as the min-heap property is now satisfied.
      */
     private void heapifyUp() {
+        // Assume the value added is last in the heap.
+        int addedindex = this.getUsage() - 1;
+        // obtain value of the new child. This variable is not meant to be adjusted. I also changed
+        // the name to be in line with the convention we talked about in class today (12/10)
+        final int ADDED_CHILD = this.underlying[addedindex];
+        // add index for the parent of the added element
+        int parent;
+        // loop control
+        boolean minHeapViolated = true;
+        // the while loop operates while the min-heap property is not satisfied.
+        // It also takes the assumption that the minheap object its being fed is not valid only due
+        // to the added value - but valid otherwise.
+        while (minHeapViolated) {
+            // whenever the loop iterates, the parent of the new element's current position is updated to
+            // this variable.
+            parent = parent(addedindex);
+            // if the parent's value is greater than the new element's variable, then min-heap is still
+            // violated.
+            if (this.underlying[parent] > ADDED_CHILD) {
+                // swaps the indexed positions of the parent and the new element. The variable values themselves
+                // are not switched, however.
+                swap(parent, addedindex);
+                // updates the new element's index variable with the old parent's index in the list.
+                addedindex = parent;
+            // once the boolean statement above is no longer true, the min-heap property is satisfied, and the
+            // the boolean loop controller is updated.
+            } else {
+                // exit loop
+                minHeapViolated = false;
+            }
+        }
     } // method heapifyUp
 
     /**
